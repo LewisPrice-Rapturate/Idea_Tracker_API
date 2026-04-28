@@ -71,15 +71,26 @@ paths:
         - Ideas
       security:
         - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SearchQuery'
+        - $ref: '#/components/parameters/SortBy'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Idea'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Idea'
+                  total:
+                    type: integer
+                    example: 100
         '401':
           description: Unauthorized - Missing or invalid token
     post:
@@ -584,10 +595,10 @@ components:
       properties:
         name:
           type: string
-          example: A task Manager
+          example: Updated Task Manager
         description:
           type: string
-          example: A web app that manages tasks.
+          example: Updated Description for the task mananger idea.
 
     Project:
       type: object
