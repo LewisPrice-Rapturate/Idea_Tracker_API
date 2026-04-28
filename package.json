@@ -1,7 +1,7 @@
 {
   "name": "Idea_Tracker",
   "version": "1.0.0",
-  "description": "A simple idea tracking API built with Express and Prisma",
+  "description": "This is a professional-grade Project Portfolio & Lifecycle API designed to manage the journey from initial inspiration to completed documentation. Built with a Node.js/Express backend and Prisma ORM, it provides a secure, layered environment for handling complex project data and binary assets.",
   "main": "index.js",
   "scripts": {
     "dev": "node --env-file=.env --watch src/server.js",
@@ -9,8 +9,7 @@
     "seed:dev": "node --env-file=.env prisma/seed.js",
     "seed:prod": "node prisma/seed.js",
     "migrate:dev": "npx prisma migrate dev",
-    "migrate:deploy": "npx prisma migrate deploy",
-    "postinstall": "npx prisma generate"
+    "migrate:deploy": "npx prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
