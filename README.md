@@ -11,6 +11,7 @@ Local User Testing:
    - npm run migrate:dev
    - npx prisma generate
    - npm run setup:env
+     -- this creates the .env file. It auto generates a new JWT_SECRET variable using "require('crypto').randomBytes(32).toString('hex')" so feel free to generate a new one if you'd like.
    - npm run seed:dev
    - npm run dev
 

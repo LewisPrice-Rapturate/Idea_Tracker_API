@@ -574,7 +574,7 @@ components:
         id:
           type: integer
           readOnly: true
-          example: 1
+          example: 2
         name:
           type: string
           example: A Task Manager
@@ -605,10 +605,10 @@ components:
       properties:
         name:
           type: string
-          example: Updated Task Manager
+          example: Updated Idea
         description:
           type: string
-          example: Updated Description for the task mananger idea.
+          example: Updated Idea description.
 
     Project:
       type: object
@@ -652,10 +652,10 @@ components:
       properties:
         name:
           type: string
-          example: Project 1
+          example: Updated Project
         description:
           type: string
-          example: Project 1 description
+          example: Updated Project description
 
     Material:
       type: object
