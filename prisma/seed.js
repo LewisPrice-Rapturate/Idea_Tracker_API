@@ -1,11 +1,21 @@
 import bcrypt from 'bcrypt';
 import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import prisma from '../src/config/db.js';
 
-try {
-  await prisma.$queryRaw`TRUNCATE users, ideas, projects, materials, files RESTART IDENTITY CASCADE;`;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const seedFilesDir = path.join(__dirname, 'seed_files');
 
-  // Create users
+try {
+ // Clearing the database
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('Clearing database for development seed...');
+    await prisma.$queryRaw`TRUNCATE users, ideas, projects, materials, files RESTART IDENTITY CASCADE;`;
+  }
+
+// Creating my users
   const usersData = [
     { username: 'alice_dev', password: 'alice1234' },
     { username: 'bob_maker', password: 'bob1234' },
@@ -13,85 +23,68 @@ try {
   ];
 
   const users = [];
-
   for (const userData of usersData) {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-
     const user = await prisma.user.create({
       data: {
         username: userData.username,
         password: hashedPassword,
       },
     });
-
     users.push(user);
+    console.log(`Created user: ${user.username}`);
   }
 
-  // Create ideas for each user
+  // Each user gets 3 Ideas, each Idea gets 3 Projects, each Project gets 3 Materials and 3 Files
   for (const user of users) {
     await prisma.idea.createMany({
       data: [
-        {
-          name: 'AI-Powered Task Manager',
-          description:
-            'A web app that uses AI to prioritize tasks intelligently based on user patterns.',
-          userId: user.id,
-        },
-        {
-          name: 'Community Recipe Hub',
-          description:
-            'A platform where users can share, rate, and discover recipes from around the world.',
-          userId: user.id,
-        },
-        {
-          name: 'Real-time Collaboration Tool',
-          description:
-            'A tool for teams to brainstorm and collaborate in real-time with visual whiteboarding.',
-          userId: user.id,
-        },
+        { name: `${user.username} Idea 1`, description: 'Smart Tasking', userId: user.id },
+        { name: `${user.username} Idea 2`, description: 'Recipe Hub', userId: user.id },
+        { name: `${user.username} Idea 3`, description: 'Collab Tool', userId: user.id },
       ],
     });
-  }
 
-  // Create projects with materials for each user
-  for (const user of users) {
-    const project = await prisma.project.create({
-      data: {
-        name: `${user.username}'s Innovation Lab`,
-        description: `Main project workspace for ${user.username} to develop and prototype ideas.`,
-        userId: user.id,
-      },
-    });
+    for (let p = 1; p <= 3; p++) {
+      const project = await prisma.project.create({
+        data: {
+          name: `${user.username} Project ${p}`,
+          description: `Workspace for project ${p}`,
+          userId: user.id,
+        },
+      });
 
-    // Add materials to the project
-    await prisma.material.createMany({
-      data: [
-        {
-          name: 'Research Paper on UX Design',
-          description: 'Key findings on modern UI/UX best practices.',
-          source: 'Nielsen Norman Group',
-          author: 'Don Norman',
-          text: 'User experience encompasses all aspects of the end-users interaction with the company, its services, and its products.',
-          projectId: project.id,
-        },
-        {
-          name: 'API Documentation Reference',
-          description: 'Technical specifications for third-party integrations.',
-          source: 'OpenAI API Docs',
-          author: 'OpenAI Team',
-          text: 'The API provides access to state-of-the-art language models for various NLP tasks.',
-          projectId: project.id,
-        },
-        {
-          name: 'Project Budget Template',
-          description: 'Financial planning and resource allocation framework.',
-          source: 'Internal Resources',
-          author: 'Finance Department',
-          text: 'Ensure all project expenses are tracked and approved according to company policy.',
-          projectId: project.id,
-        },
-      ],
-    });
+      await prisma.material.createMany({
+        data: [
+          { name: 'Research Paper', description: 'UX findings', source: 'Group A', author: 'Don Norman', text: 'Sample text...', projectId: project.id },
+          { name: 'API Docs', description: 'Specs', source: 'Dev Portal', author: 'Team B', text: 'Technical data...', projectId: project.id },
+          { name: 'Budget Template', description: 'Finance', source: 'Internal', author: 'Dept C', text: 'Allocations...', projectId: project.id },
+        ],
+      });
+
+      // Create 3 Files for each project (pulling from seed_files folder), I put one of each mime type listed on line 94 and it will reuse any to make sure each user has 3. 
+      if (fs.existsSync(seedFilesDir)) {
+        const availableFiles = fs.readdirSync(seedFilesDir);
+        if (availableFiles.length > 0) {
+          for (let f = 0; f < 3; f++) {
+            const filename = availableFiles[f % availableFiles.length];
+            const filePath = path.join(seedFilesDir, filename);
+            const stats = fs.statSync(filePath);
+            const fileBuffer = fs.readFileSync(filePath);
+
+            await prisma.file.create({
+              data: {
+                name: `U${user.id}_P${project.id}_${f}_${filename}`,
+                file: fileBuffer,
+                size: stats.size,
+                mimeType: getMimeType(filename),
+                projectId: project.id,
+              },
+            });
+          }
+        }
+      }
+    }
   }
 
   console.log('Seed completed successfully!');
@@ -99,4 +92,16 @@ try {
   console.error('Seed failed:', error);
 } finally {
   await prisma.$disconnect();
+}
+
+function getMimeType(filename) {
+  const ext = path.extname(filename).toLowerCase();
+  const mimes = {
+    '.pdf': 'application/pdf',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.png': 'image/png',
+    '.cpp': 'text/x-c',
+    '.txt': 'text/plain',
+  };
+  return mimes[ext] || 'application/octet-stream';
 }

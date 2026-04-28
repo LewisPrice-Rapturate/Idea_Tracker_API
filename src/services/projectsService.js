@@ -8,7 +8,7 @@ import {
   getFilesByProjectId,
   getFilesWithContent,
   addFile,
-  deleteFile
+  deleteFile,
 } from '../repositories/projectsRepo.js';
 
 export async function getAllProjects(userId, options = {}) {
@@ -147,7 +147,10 @@ export async function addProjectFile(projectId, userId, fileData) {
 
 export async function deleteProjectFile(fileId, userId) {
   if (process.env.NODE_ENV === 'development') {
-    console.log('projectsService.deleteProjectFile() called for fileId:', fileId);
+    console.log(
+      'projectsService.deleteProjectFile() called for fileId:',
+      fileId
+    );
   }
 
   const deletedFile = await deleteFile(fileId, userId);

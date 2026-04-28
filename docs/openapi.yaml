@@ -522,11 +522,11 @@ components:
       properties:
         username:
           type: string
-          example: new_user_1
+          example: alice_dev
         password:
           type: string
           format: password
-          example: newpassword1234
+          example: alice1234
 
     UserResponse:
       type: object
@@ -536,7 +536,7 @@ components:
           example: 10
         username:
           type: string
-          example: new_user_1
+          example: alice_dev
 
     LoginResponse:
       type: object
@@ -554,10 +554,10 @@ components:
           example: 1
         name:
           type: string
-          example: AI-Powered Task Manager
+          example: A Task Manager
         description:
           type: string
-          example: A web app that uses AI to prioritize tasks intelligently
+          example: A web app that manages tasks.
         date_created:
           type: string
           format: date-time
@@ -571,10 +571,10 @@ components:
       properties:
         name:
           type: string
-          example: AI-Powered Task Manager
+          example: A Task Manager
         description:
           type: string
-          example: A web app that uses AI to prioritize tasks intelligently
+          example: A web app that manages tasks.
 
     IdeaUpdateRequest:
       type: object
@@ -582,10 +582,10 @@ components:
       properties:
         name:
           type: string
-          example: AI-Powered Task Manager
+          example: A task Manager
         description:
           type: string
-          example: A web app that uses AI to prioritize tasks intelligently
+          example: A web app that manages tasks.
 
     Project:
       type: object

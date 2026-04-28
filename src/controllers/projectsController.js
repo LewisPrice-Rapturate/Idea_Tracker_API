@@ -82,7 +82,7 @@ export async function addProjectFileHandler(req, res) {
       name: req.file.originalname,
       file: req.file.buffer,
       size: req.file.size,
-      mimeType: req.file.mimetype
+      mimeType: req.file.mimetype,
     };
   } catch (error) {
     return res.status(400).json({ error: 'Invalid file data' });
@@ -103,9 +103,9 @@ export async function addProjectFileHandler(req, res) {
 export async function deleteProjectFileHandler(req, res) {
   try {
     const fileId = parseInt(req.params.id);
-    
+
     const deletedFile = await deleteProjectFile(fileId, req.user.id);
-    
+
     if (!deletedFile) {
       return res.status(404).json({ error: 'File not found or unauthorized' });
     }
@@ -129,28 +129,28 @@ export async function downloadProjectFilesHandler(req, res) {
 
     res.set({
       'Content-Type': 'application/zip',
-      'Content-Disposition': `attachment; filename="project_${fileId}_files.zip"`
+      'Content-Disposition': `attachment; filename="project_${fileId}_files.zip"`,
     });
 
     const archive = archiver('zip', { zlib: { level: 9 } });
 
     archive.pipe(res);
 
-    files.forEach(f => {
-    
+    files.forEach((f) => {
       const binaryData = f.file;
 
       if (binaryData) {
         const bufferData = Buffer.from(binaryData);
         archive.append(bufferData, { name: f.name });
-      }
-      else {
-        console.error(`ERROR: No binary data found for ${f.name}. Object was:`, f);
+      } else {
+        console.error(
+          `ERROR: No binary data found for ${f.name}. Object was:`,
+          f
+        );
       }
     });
 
     await archive.finalize();
-
   } catch (error) {
     if (!res.headersSent) {
       res.status(error.status || 500).json({ error: error.message });

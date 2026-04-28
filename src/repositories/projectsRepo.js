@@ -195,8 +195,8 @@ export async function addFile(projectId, userId, fileData) {
       file: fileData.file,
       size: fileData.size,
       mimeType: fileData.mimeType,
-      projectId: projectId
-    }
+      projectId: projectId,
+    },
   });
 
   return newFile;
@@ -204,12 +204,17 @@ export async function addFile(projectId, userId, fileData) {
 
 export async function deleteFile(fileId, userId) {
   if (process.env.NODE_ENV === 'development') {
-    console.log('projectsRepo.deleteFile() called for fileId:', fileId, 'userId:', userId);
+    console.log(
+      'projectsRepo.deleteFile() called for fileId:',
+      fileId,
+      'userId:',
+      userId
+    );
   }
 
   const file = await prisma.file.findUnique({
     where: { id: fileId },
-    include: { project: true }
+    include: { project: true },
   });
 
   if (!file || file.project.userId !== userId) {
@@ -236,7 +241,7 @@ export async function getFilesWithContent(projectId, userId) {
       file: true,
       size: true,
       mimeType: true,
-      projectId: true
-    }
+      projectId: true,
+    },
   });
 }
