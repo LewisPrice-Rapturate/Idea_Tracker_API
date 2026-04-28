@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Idea Tracker API
   version: 1.0.0
-  description: A REST API for managing project ideas, projects, materials, and files
+  description: This is a professional-grade Project Portfolio & Lifecycle API designed to manage the journey from initial inspiration to completed documentation. Built with a Node.js/Express backend and Prisma ORM, it provides a secure, layered environment for handling complex project data and binary assets.
 servers:
   - url: https://idea-tracker-api.onrender.com/
     description: Production server
