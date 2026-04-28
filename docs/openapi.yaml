@@ -147,8 +147,6 @@ paths:
                 $ref: '#/components/schemas/Idea'
         '400':
           description: Bad Request - Id not a positive integer, or no fields provided
-        '401':
-          description: Unauthorized - Missing or invalid token
         '404':
           description: Not Found - No idea with that id belongs to this user
         '409':

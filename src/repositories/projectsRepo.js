@@ -29,7 +29,7 @@ export async function getAll(
     orderBy: { [safeSortBy]: safeOrder },
     skip: offset,
     take: limit,
-    include: { files: true },
+    include: { files: false },
   });
 
   return projects;
@@ -47,7 +47,7 @@ export async function getById(projectId, userId) {
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
-    include: { files: true },
+    include: { files: false },
   });
 
   if (project && project.userId !== userId) {
@@ -64,7 +64,7 @@ export async function create(userId, projectData) {
 
   const newProject = await prisma.project.create({
     data: { ...projectData, userId },
-    include: { files: true },
+    include: { files: false },
   });
 
   return newProject;
@@ -92,7 +92,7 @@ export async function update(projectId, userId, updatedData) {
     const updatedProject = await prisma.project.update({
       where: { id: projectId },
       data: updatedData,
-      include: { files: true },
+      include: { files: false },
     });
 
     return updatedProject;
@@ -118,7 +118,7 @@ export async function remove(projectId, userId) {
 
     const deletedProject = await prisma.project.delete({
       where: { id: projectId },
-      include: { files: true },
+      include: { files: false },
     });
 
     return deletedProject;
