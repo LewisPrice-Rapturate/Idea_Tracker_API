@@ -2,6 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import swaggerUI from 'swagger-ui-express';
 import yaml from 'js-yaml';
 
@@ -9,6 +11,9 @@ import authRoutes from './routes/authRoutes.js';
 import ideasRoutes from './routes/ideasRoutes.js';
 import projectsRoutes from './routes/projectsRoutes.js';
 import materialsRoutes from './routes/materialsRoutes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,7 +23,8 @@ if (process.env.NODE_ENV !== 'test') app.use(morgan('tiny'));
 
 let specs;
 try {
-  specs = yaml.load(fs.readFileSync('./docs/openapi.yaml', 'utf8'));
+  const yamlPath = path.join(__dirname, '..', 'docs', 'openapi.yaml');
+  specs = yaml.load(fs.readFileSync(yamlPath, 'utf8'));
 } catch (error) {
   console.log('Failed to load OpenAPI specification', error);
   process.exit(1);
