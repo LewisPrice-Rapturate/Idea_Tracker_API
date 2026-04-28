@@ -110,7 +110,7 @@ export async function deleteProjectFileHandler(req, res) {
       return res.status(404).json({ error: 'File not found or unauthorized' });
     }
 
-    res.status(200).json({ message: 'File deleted successfully' });
+    res.status(204).json({ message: 'File deleted successfully' });
   } catch (error) {
     res.status(400).json({ error: 'Invalid file ID' });
   }

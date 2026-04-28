@@ -390,6 +390,10 @@ paths:
               schema:
                 type: string
                 format: binary
+        '404':
+          description: Not Found or Unauthorized
+        '400':
+          description: Bad Request - Id not a positive integer
 
   /api/materials:
     get:
