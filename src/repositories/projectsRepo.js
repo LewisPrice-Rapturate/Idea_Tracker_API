@@ -161,6 +161,13 @@ export async function getFilesByProjectId(projectId, userId) {
 
     const files = await prisma.file.findMany({
       where: { projectId },
+      select: {
+        id: true,
+        projectId: true,
+        name: true,
+        size: true,
+        mimeType: true,
+      },
     });
 
     return files;
