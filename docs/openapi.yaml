@@ -614,22 +614,17 @@ components:
         id:
           type: integer
           readOnly: true
-          example: 1
+          example: 10
         name:
           type: string
-          example: Project 1
+          example: alice_dev Project 4
         description:
           type: string
-          example: Project 1 description
+          example: Workspace for project 4
         date_created:
           type: string
           format: date-time
           readOnly: true
-        files:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/File'
 
     ProjectRequest:
       type: object
@@ -639,10 +634,10 @@ components:
       properties:
         name:
           type: string
-          example: Project 1
+          example: alice_dev Project 4
         description:
           type: string
-          example: Project 1 description
+          example: Workspace for project 4
 
     ProjectUpdateRequest:
       type: object
