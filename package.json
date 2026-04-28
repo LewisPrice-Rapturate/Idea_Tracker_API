@@ -9,10 +9,11 @@
     "seed:dev": "node --env-file=.env prisma/seed.js",
     "seed:prod": "node prisma/seed.js",
     "migrate:dev": "npx prisma migrate dev",
-    "migrate:deploy": "npx prisma migrate deploy"
+    "migrate:deploy": "npx prisma migrate deploy",
+    "setup:env": "node -e \"const fs = require('fs'); const secret = require('crypto').randomBytes(32).toString('hex'); const content = `PORT=8080\\nNODE_ENV=development\\nDATABASE_URL=postgresql://postgres:134@localhost:5432/idea_tracker\\nJWT_SECRET=${secret}\\nJWT_EXPIRES_IN=1h\\n`; if (!fs.existsSync('.env')) { fs.writeFileSync('.env', content); console.log('.env file created with a fresh JWT_SECRET.'); } else { console.log('.env already exists, skipping generation.'); }\""
   },
   "keywords": [],
-  "author": "",
+  "author": "Lew Price",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
