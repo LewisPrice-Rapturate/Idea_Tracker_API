@@ -1,0 +1,699 @@
+openapi: 3.1.0
+info:
+  title: Idea Tracker API
+  version: 1.0.0
+  description: A REST API for managing project ideas, projects, materials, and files
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Ideas
+    description: Idea management endpoints
+  - name: Projects
+    description: Project management endpoints
+  - name: Materials
+    description: Project materials and resources
+
+paths:
+  /api/auth/signup:
+    post:
+      summary: Create a new user account
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid input or validation error
+        '409':
+          description: Username already exists
+
+  /api/auth/login:
+    post:
+      summary: Login and receive JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+
+  /api/ideas:
+    get:
+      summary: Get all ideas for the authenticated user
+      tags:
+        - Ideas
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Idea'
+        '401':
+          description: Unauthorized - Missing or invalid token
+    post:
+      summary: Create a new idea
+      tags:
+        - Ideas
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdeaRequest'
+      responses:
+        '201':
+          description: Idea created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Idea'
+        '400':
+          description: Bad Request - Validation error
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '409':
+          description: Conflict - Idea with that name already exists
+
+  /api/ideas/{id}:
+    put:
+      summary: Update an idea
+      tags:
+        - Ideas
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdeaUpdateRequest'
+      responses:
+        '200':
+          description: Idea updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Idea'
+        '400':
+          description: Bad Request - Id not a positive integer, or no fields provided
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No idea with that id belongs to this user
+        '409':
+          description: Conflict - Idea with that name already exists
+    delete:
+      summary: Delete an idea
+      tags:
+        - Ideas
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Idea deleted successfully
+        '400':
+          description: Bad Request - Id not a positive integer
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No idea with that id belongs to this user
+
+  /api/projects:
+    get:
+      summary: Get all projects for the authenticated user
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized - Missing or invalid token
+    post:
+      summary: Create a new project
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectRequest'
+      responses:
+        '201':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Bad Request - Validation error
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '409':
+          description: Conflict - Project with that name already exists
+
+  /api/projects/{id}:
+    get:
+      summary: Get a project by ID
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Bad Request - Id not a positive integer
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No project with that id belongs to this user
+    put:
+      summary: Update a project
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdateRequest'
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Bad Request - Id not a positive integer, or no fields provided
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No project with that id belongs to this user
+        '409':
+          description: Conflict - Project with that name already exists
+    delete:
+      summary: Delete a project
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Project deleted successfully
+        '400':
+          description: Bad Request - Id not a positive integer
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No project with that id belongs to this user
+
+  /api/projects/{id}/files:
+    get:
+      summary: List all files related to a project
+      tags:
+        - Projects
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+        '400':
+          description: Bad Request - Id not a positive integer
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No project with that id belongs to this user
+    post:
+      summary: Upload a file (Max 10MB)
+      tags: [Projects]
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: File uploaded
+        '400':
+          description: Bad Request - Id not a positive integer
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No project with that id belongs to this user
+        '413':
+          description: Payload Too Large - File size exceeds 10MB limit
+
+  /api/projects/files/{fileId}:
+    delete:
+      summary: Delete a specific project file
+      tags: [Projects]
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: File deleted
+        '404':
+          description: Not Found or Unauthorized
+
+  /api/projects/{id}/files/download:
+    get:
+      summary: Download all project files as a ZIP
+      tags: [Projects]
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: A ZIP file containing all project documents
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+
+  /api/materials:
+    get:
+      summary: Get all materials for the authenticated user
+      tags:
+        - Materials
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Material'
+        '401':
+          description: Unauthorized - Missing or invalid token
+    post:
+      summary: Create a new material
+      tags:
+        - Materials
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialRequest'
+      responses:
+        '201':
+          description: Material created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Material'
+        '400':
+          description: Bad Request - Validation error
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '409':
+          description: Conflict - Material with that name already exists
+
+  /api/materials/project/{projectId}:
+    get:
+      summary: Get all materials for a specific project
+      tags:
+        - Materials
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Material'
+        '400':
+          description: Bad Request - projectId not a positive integer
+        '401':
+          description: Unauthorized - Missing or invalid token
+
+  /api/materials/{id}:
+    delete:
+      summary: Delete a material by ID
+      tags:
+        - Materials
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Material deleted successfully
+        '400':
+          description: Bad Request - Id not a positive integer
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - No material with that id belongs to this user
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+    SearchQuery:
+      name: search
+      in: query
+      schema: { type: string }
+    SortBy:
+      name: sortBy
+      in: query
+      schema: { type: string, enum: [name, date_created, id] }
+    Limit:
+      name: limit
+      in: query
+      schema: { type: integer, default: 10 }
+    Offset:
+      name: offset
+      in: query
+      schema: { type: integer, default: 0 }
+
+  schemas:
+    SignupRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: new_user_1
+        password:
+          type: string
+          format: password
+          example: newpassword1234
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: new_user_1
+        password:
+          type: string
+          format: password
+          example: newpassword1234
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+        username:
+          type: string
+          example: new_user_1
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Idea:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          example: AI-Powered Task Manager
+        description:
+          type: string
+          example: A web app that uses AI to prioritize tasks intelligently
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+
+    IdeaRequest:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          example: AI-Powered Task Manager
+        description:
+          type: string
+          example: A web app that uses AI to prioritize tasks intelligently
+
+    IdeaUpdateRequest:
+      type: object
+      description: At least one field must be provided
+      properties:
+        name:
+          type: string
+          example: AI-Powered Task Manager
+        description:
+          type: string
+          example: A web app that uses AI to prioritize tasks intelligently
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          example: Project 1
+        description:
+          type: string
+          example: Project 1 description
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        files:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/File'
+
+    ProjectRequest:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          example: Project 1
+        description:
+          type: string
+          example: Project 1 description
+
+    ProjectUpdateRequest:
+      type: object
+      description: At least one field must be provided
+      properties:
+        name:
+          type: string
+          example: Project 1
+        description:
+          type: string
+          example: Project 1 description
+
+    Material:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        projectId:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Resource 1
+        description:
+          type: string
+          example: Resource 1 description
+        source:
+          type: string
+          example: Source 1
+        author:
+          type: string
+          example: Author 1
+        text:
+          type: string
+          example: Resource 1 text
+
+    MaterialRequest:
+      type: object
+      required:
+        - projectId
+        - name
+        - description
+        - source
+        - author
+        - text
+      properties:
+        projectId:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Resource 1
+        description:
+          type: string
+          example: Resource 1 description
+        source:
+          type: string
+          example: Source 1
+        author:
+          type: string
+          example: Author 1
+        text:
+          type: string
+          example: Resource 1 text
+
+    File:
+      type: object
+      properties:
+        id: { type: integer }
+        projectId: { type: integer }
+        name: { type: string }
+        size: { type: integer }
+        mimeType: { type: string }

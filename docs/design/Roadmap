@@ -1,0 +1,53 @@
+# IDEA TRACKER API - DEVELOPMENT ROADMAP
+
+# PHASE 1: MIDDLEWARE & VALIDATION
+
+[x] Create authMiddleware.js - JWT verification and user authentication
+[x] Create validateIdeas.js - Request validation for idea endpoints - Validate POST: name (3+ chars), description (required) - Validate PUT: same as POST, but both optional - Validate param id as positive integer
+[x] Create validateProjects.js - Request validation for project endpoints - Validate POST: name (3+ chars), description (required) - Validate PUT: same as POST, but both optional - Validate param id as positive integer
+[x] Create validateMaterials.js - Request validation for material endpoints - Validate POST: projectId, name, description, source, author, text (all required) - Validate DELETE: param id as positive integer
+[x] Update/Review handleValidationErrors.js to ensure proper error responses
+
+# PHASE 2: REPOSITORY LAYER (DATA ACCESS)
+
+[x] Create ideasRepo.js - getAll(userId) - fetch all user ideas - getById(ideaId, userId) - fetch single idea with ownership check - create(userId, { name, description }) - update(ideaId, userId, { name, description }) - delete(ideaId, userId) - existsByName(userId, name) - check for duplicates
+[x] Create projectsRepo.js - getAll(userId) - getById(projectId, userId) - create(userId, { name, description }) - update(projectId, userId, { name, description }) - delete(projectId, userId) - existsByName(userId, name)
+[x] Create materialsRepo.js - getAll(userId) - all user materials - getByProjectId(projectId, userId) - materials for specific project - getById(materialId, userId) - single material with access check - create(userId, { projectId, name, description, source, author, text }) - delete(materialId, userId) - existsByName(userId, name)
+
+# PHASE 3: SERVICE LAYER (BUSINESS LOGIC)
+
+[x] Create ideasService.js - getAllIdeas(userId) - getIdeaById(ideaId, userId) - with 404 handling - createIdea(userId, { name, description }) - with duplicate check (409) - updateIdea(ideaId, userId, { name, description }) - with duplicate check - deleteIdea(ideaId, userId) - with 404 handling
+[x] Create projectsService.js - Same methods as ideas service
+[x] Create materialsService.js - getAllMaterials(userId) - getMaterialsByProject(projectId, userId) - createMaterial(userId, { projectId, name, description, source, author, text }) - deleteMaterial(materialId, userId) - Include project existence validation before creating material
+
+# PHASE 4: CONTROLLER LAYER (REQUEST HANDLERS)
+
+[x] Create ideasController.js - getAll(req, res) - GET /api/ideas - getById(req, res) - GET /api/ideas/:id - create(req, res) - POST /api/ideas - update(req, res) - PUT /api/ideas/:id - delete(req, res) - DELETE /api/ideas/:id
+[x] Create projectsController.js - getAll(req, res) - GET /api/projects - getById(req, res) - GET /api/projects/:id - create(req, res) - POST /api/projects - update(req, res) - PUT /api/projects/:id - delete(req, res) - DELETE /api/projects/:id
+[x] Create materialsController.js - getAll(req, res) - GET /api/materials - getByProject(req, res) - GET /api/materials/:projectId - create(req, res) - POST /api/materials - delete(req, res) - DELETE /api/materials/:id
+
+# PHASE 5: ROUTES
+
+[x] Create ideasRoutes.js - Route all endpoints with validation & auth middleware
+[x] Create projectsRoutes.js - Route all endpoints with validation & auth middleware
+[x] Create materialsRoutes.js - Route all endpoints with validation & auth middleware
+
+# PHASE 6: UPDATE SERVER
+
+[x] Update server.js - Replace /api/posts with /api/ideas - Add /api/projects routes - Add /api/materials routes
+
+# PHASE 7: TESTING
+
+[X] Test all endpoints with Swagger
+[X] Verify JWT auth on protected routes
+[x] Test 404, 409, 403 error cases
+[X] Run seed script: npm run seed
+[X] Verify Prettier formatting: npx prettier --write .
+
+# PHASE 8: POLISH
+
+[X] Write swagger for pagination
+[X] Write code for POST project Files (within projects layers)
+[X] Write code for DELETE project Files (within projects layers)
+[X] Edit swagger to show an option for "upload a file to this project"
+[X] create a path for downloading all files related to a project

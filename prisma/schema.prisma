@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma.js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  username String    @unique
+  password String
+  ideas    Idea[]
+  projects Project[]
+
+  @@map("users")
+}
+
+model Idea {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String
+  date_created DateTime @default(now()) @map("date_created")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int      @map("user_id")
+
+  @@index([userId])
+  @@map("ideas")
+}
+
+model Project {
+  id           Int        @id @default(autoincrement())
+  name         String
+  description  String
+  date_created DateTime   @default(now()) @map("date_created")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int        @map("user_id")
+  materials    Material[]
+  files        File[]
+
+  @@index([userId])
+  @@map("projects")
+}
+
+model Material {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String
+  source      String
+  author      String
+  text        String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   Int     @map("project_id")
+
+  @@index([projectId])
+  @@map("materials")
+}
+
+model File {
+  id        Int     @id @default(autoincrement())
+  name      String
+  file      Bytes
+  size      Int
+  mimeType  String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int     @map("project_id")
+
+  @@index([projectId])
+  @@map("files")
+}
