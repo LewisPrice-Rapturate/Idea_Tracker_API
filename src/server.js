@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.get('/health', (req, res) => res.status(200).json({ status: 'UP' }));
-app.get('/', (req, res) => res.status(200).send('API is running...'));
+app.get('/', (req, res) => res.status(200).send('API is running...\nVisit /api-docs for API documentation'));
 if (process.env.NODE_ENV !== 'test') app.use(morgan('tiny'));
 
 let specs;
@@ -31,8 +31,8 @@ try {
   console.log('Failed to load OpenAPI specification', error);
   process.exit(1);
 }
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 app.use('/api/auth', authRoutes);
 app.use('/api/ideas', ideasRoutes);
 app.use('/api/projects', projectsRoutes);
